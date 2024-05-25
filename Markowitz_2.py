@@ -74,7 +74,97 @@ class MyPortfolio:
         """
         TODO: Complete Task 4 Below
         """
+        a = self.portfolio_weights[assets].copy()
+        a *= 0.0
+        # print(f"returns in My: {self.returns}")
+        # print(self.returns.shape[0])
+        for i in range(self.returns.shape[0]):
+            max = 0.0
+            max_col = ""
+            for col in self.returns.columns:
+                if self.returns[col][i] > max:
+                    max = self.returns[col][i]
+                    max_col = col
+            if max != 0.0:
+                a[max_col][i] = 1.0
+        self.portfolio_weights[assets] = a[assets]
+        # print(self.portfolio_weights[assets])
+        # print(a[assets])
+        self.portfolio_weights.fillna(0, inplace=True)
 
+
+
+        # for col in self.returns.index:
+            # print(col.astype(str))
+        # for index, row in self.returns.iterrows():
+        #     # print("0.0.0.0.000.0.0.0.0.0")
+        #     # print(index[0])
+        #     # break
+        #     max = 0.0
+        #     max_col = ""
+        #     for col_name in df.columns:
+        #         # print(col_name)
+        #         break
+        #         if row[col_name] > max:
+        #             max = row[col_name]
+        #             max_col = col_name
+        #         # print(row[col_name])
+        #     if max_col!="":
+        #         a[row][max_col] = max
+                    
+        # print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+        # print(a)
+        # print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+                
+
+        # SMA_short = self.price.rolling(window=50, min_periods=1).mean()
+        # SMA_long = self.price.rolling(window=200, min_periods=1).mean()
+
+        # # Generate signals: 1 for long, 0 for no position
+        # signals = pd.DataFrame(0, index=self.price.index, columns=self.price.columns)
+        # signals[SMA_short > SMA_long] = 1
+
+        # # Assign weights based on signals (assuming equal weight distribution among active positions)
+        # for date in signals.index:
+        #     active_assets = signals.loc[date, signals.loc[date] == 1]
+        #     if not active_assets.empty:
+        #         self.portfolio_weights.loc[date, active_assets.index] = 1 / active_assets.sum()
+
+        # Strategy 1
+        # num_assets = len(assets)  # Number of assets excluding the 'exclude' asset
+        # weight = 1 / num_assets  # Equal weight for each asset
+
+        # # Set weights for each date and each asset
+        # for date in self.portfolio_weights.index:
+        #     for asset in self.portfolio_weights.columns:
+        #         if asset in assets:
+        #             self.portfolio_weights.at[date, asset] = weight
+        #         else:
+        #             self.portfolio_weights.at[date, asset] = 0  # Set excluded asset's weight to zero
+
+
+        # Strategy 2
+        # df_returns = self.returns
+        # # Calculate expected returns and the covariance matrix
+        # volatilities = df_returns[assets].rolling(window=self.lookback).std()
+        # inverse_volatilities = 1 / volatilities
+        # # sum_inverse_volatilities = inverse_volatilities.sum(axis=1)
+        # self.portfolio_weights[assets] = inverse_volatilities[assets].div(inverse_volatilities.sum(axis=1), axis=0)
+        # # for asset in assets:
+        # #     self.portfolio_weights[asset] = inverse_volatilities[asset] / sum_inverse_volatilities
+        # self.portfolio_weights[assets] = self.portfolio_weights[assets].shift(1, fill_value=0.0)
+        # # self.portfolio_weights[assets].loc[self.lookback - 1] = 0.0
+        # a = self.portfolio_weights[assets].copy()
+        # for asset in assets:
+        #     a[asset][self.lookback] = 0.0
+        # self.portfolio_weights[assets] = a[assets]
+
+        # df_returns = df.pct_change().fillna(0)
+        # for i in range(self.lookback + 1, len(df)):
+        #     R_n = df_returns.copy()[assets].iloc[i - self.lookback : i]
+        #     self.portfolio_weights.loc[df.index[i], assets] = self.mv_opt(
+        #         R_n, self.gamma
+        #     )
         """
         TODO: Complete Task 4 Above
         """
@@ -100,7 +190,6 @@ class MyPortfolio:
         # Ensure portfolio returns are calculated
         if not hasattr(self, "portfolio_returns"):
             self.calculate_portfolio_returns()
-
         return self.portfolio_weights, self.portfolio_returns
 
 
